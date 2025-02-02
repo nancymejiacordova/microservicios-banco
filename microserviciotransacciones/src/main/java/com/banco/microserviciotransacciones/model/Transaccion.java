@@ -2,9 +2,9 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package com.banco.microserviciocuentas.model;
+package com.banco.microserviciotransacciones.model;
 
-import com.banco.microserviciocuentas.enums.TipoCuentaEnum;
+import com.banco.microserviciotransacciones.enums.TipoTransaccion;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -20,7 +20,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -37,33 +36,30 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name="cuentaBancaria")
-public class CuentaBancaria implements Serializable {
+@Table(name="transaccion")
+public class Transaccion implements Serializable  {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long idcuentabancaria;
+    private long idtransaccion;
     
-    @Column(unique=true,length=10,nullable=false)
-    private String numerocuenta;
+    @Column(nullable=false)
+    private BigDecimal monto;
     
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private TipoCuentaEnum tipocuenta;
-    
-    @Column(nullable=false)
-    private BigDecimal saldoactual;
+    private TipoTransaccion tipotransaccion;
     
     @Column(nullable=false)
     @Temporal(javax.persistence.TemporalType.DATE)
-    private Date fechaCreacion;
-    
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date fechaultimaactualizacion;
+    private Date fechatransaccion;
     
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name="idcliente")
-    private Cliente idcliente;
+    @JoinColumn(name="idcuentaorigen")
+    private CuentaBancaria idcuentaorigen;
     
-   
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name="idcuentadestino")
+    private CuentaBancaria idcuentadestino;
+    
 }

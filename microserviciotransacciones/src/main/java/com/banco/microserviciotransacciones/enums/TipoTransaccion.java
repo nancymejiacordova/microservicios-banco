@@ -2,20 +2,20 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package com.banco.microserviciocuentas.enums;
+package com.banco.microserviciotransacciones.enums;
 
 /**
  *
- * @author Nancy Mejia
+ * @author nancy
  */
-
-public enum TipoCuentaEnum {
-    Corriente("Corriente"),
-    Ahorros("Ahorros");
+public enum TipoTransaccion {
+    
+    Depositos("Depositos"),
+    Retiros("Retiros");
 
     private final String tipo;
 
-    TipoCuentaEnum(String tipo) {
+    TipoTransaccion(String tipo) {
         this.tipo = tipo;
     }
 
@@ -24,4 +24,5 @@ public enum TipoCuentaEnum {
     }
 
  
+    
 }

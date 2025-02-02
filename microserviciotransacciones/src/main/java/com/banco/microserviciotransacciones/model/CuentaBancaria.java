@@ -2,9 +2,10 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package com.banco.microserviciocuentas.model;
+package com.banco.microserviciotransacciones.model;
 
-import com.banco.microserviciocuentas.enums.TipoCuentaEnum;
+
+import com.banco.microserviciotransacciones.enums.TipoCuentaEnum;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;

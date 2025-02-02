@@ -30,8 +30,9 @@ public enum ErrorEnum {
     /*Errores de dominio - Movimientos*/
     SALDO_INSUFICIENTE("ERROR_MOV_001", "Saldo no disponible"),
     ERROR_FECHA_INVALIDA("ERROR_MOV_002", "La fecha de consulta no puede ser superior a la fecha actual"),
-    ERROR_FECHA_FIN_INVALIDA("ERROR_MOV_003", "La fecha de fin de la consulta no puede ser superior a la fecha de inicio");
-
+    ERROR_FECHA_FIN_INVALIDA("ERROR_MOV_003", "La fecha de fin de la consulta no puede ser superior a la fecha de inicio"),
+    DATOS_ENTRADA_INVALIDOS("ERROR","DATOS DE ENTRADA INVALIDOS");
+    
     private String code;
     private String message;
 

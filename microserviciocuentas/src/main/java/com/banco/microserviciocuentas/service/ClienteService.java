@@ -11,7 +11,8 @@ import com.banco.microserviciocuentas.model.Cliente;
  */
 public interface ClienteService {
     
-        Cliente buscarCliente(Long clienteId);
+        //Cliente buscarCliente(Long clienteId);
+        Cliente findByidCliente(Long idCliente);
 
     
 }

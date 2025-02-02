@@ -24,7 +24,7 @@ public class ClienteServiceImpl implements ClienteService{
     private final ClienteRepository clienteRepository;
     @Override
     @Transactional(readOnly = true)
-    public Cliente buscarCliente(Long clienteId) {
+    public Cliente findByidCliente(Long clienteId) {
        return clienteRepository.findById(clienteId)
             .orElseThrow(() -> new Exceptions(ErrorEnum.CREAR_CUENTA_CLIENTE_NOT_FOUND));
     }
