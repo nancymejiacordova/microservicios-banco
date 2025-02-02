@@ -4,10 +4,14 @@
  */
 package com.banco.microserviciocuentas.config;
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 /**
  *
@@ -15,16 +19,32 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
  */
 @Configuration
 @EnableWebSecurity
-public class SecurityConfig extends WebSecurityConfigurerAdapter {
+public class SecurityConfig {
 
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        // Permite todas las solicitudes sin autenticación
+//    @Override
+//    protected void configure(HttpSecurity http) throws Exception {
+//        // Permite todas las solicitudes sin autenticación
+//        http
+//            .authorizeRequests()
+//                .antMatchers("/**").permitAll() // Permite todas las rutas
+//            .anyRequest().permitAll() // También permite cualquier otra solicitud
+//            .and()
+//            .csrf().disable(); // Desactiva CSRF (solo si es necesario, y con precaución)
+//    }
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtRequestFilter jwtRequestFilter) throws Exception {
         http
+            .csrf().disable()
             .authorizeRequests()
-                .antMatchers("/**").permitAll() // Permite todas las rutas
-            .anyRequest().permitAll() // También permite cualquier otra solicitud
+            .antMatchers("/auth/login").permitAll()  
+            .antMatchers("/cuentaBancaria/consulta/**").hasAnyRole("USER", "ADMIN")
+            .antMatchers("/cuentaBancaria/**").hasRole("ADMIN")
+            .anyRequest().authenticated()
             .and()
-            .csrf().disable(); // Desactiva CSRF (solo si es necesario, y con precaución)
+            .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+
+        http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
+
+        return http.build();
     }
 }

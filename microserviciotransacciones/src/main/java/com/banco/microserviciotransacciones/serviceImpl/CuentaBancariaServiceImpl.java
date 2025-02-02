@@ -70,7 +70,7 @@ public class CuentaBancariaServiceImpl implements CuentaBancariaService {
         CuentaBancaria cuentaBancaria = cuentaBancariaRepository.findByNumerocuenta(numeroCuenta)
                 .orElseThrow(() -> {
                     logger.warn("No se encontró una cuenta con el número de cuenta: {}", numeroCuenta);
-                    return new RuntimeException("Cuenta no encontrada");
+                    return new RuntimeException("Cuenta no encontrada"+numeroCuenta);
                 });
         logger.info("Cuenta encontrada: {}", cuentaBancaria.getIdcuentabancaria());
         return cuentaBancaria;

@@ -31,6 +31,7 @@ public class TransaccionServiceImpl implements TransaccionService {
     private CuentaBancariaService cuentaBancariaService;
 
     @Transactional
+    @Override
     public Transaccion realizarDeposito(Transaccion transaccion) {
         CuentaBancaria cuenta = cuentaBancariaService.obtenerCuentaPorNumero(transaccion.getIdcuentaorigen().getNumerocuenta());
         cuenta.setSaldoactual(cuenta.getSaldoactual().add(transaccion.getMonto()));

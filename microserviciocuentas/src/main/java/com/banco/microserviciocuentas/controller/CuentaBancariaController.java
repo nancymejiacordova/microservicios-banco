@@ -20,7 +20,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -42,7 +41,7 @@ public class CuentaBancariaController {
     private static final Logger logger = LoggerFactory.getLogger(CuentaBancariaController.class);
 
 
-    @GetMapping()
+    @GetMapping("/consulta")
     public Page<CuentaBancaria> listar(Pageable pageable){
         var listCuentas = this.cuentaBancariaService.listCuentas(pageable);
         if (!listCuentas.hasContent()) {
@@ -52,7 +51,7 @@ public class CuentaBancariaController {
     }
 
     
- @GetMapping("/{numeroCuenta}")
+ @GetMapping("/consulta/{numeroCuenta}")
     public CuentaBancaria obtenerCuentaPorNumero(@PathVariable String numeroCuenta) {
          logger.info("Recibiendo solicitud para consultar la cuenta con número: {}", numeroCuenta);
         
@@ -100,7 +99,7 @@ public class CuentaBancariaController {
 
     
   // Endpoint para obtener cuentas por idcliente
-    @GetMapping("/cuentas/{idcliente}")
+    @GetMapping("consulta/cuentascliente/{idcliente}")
     public List<CuentaBancaria> getCuentasPorCliente(@PathVariable Long idcliente) {
         logger.info("Solicitud recibida para obtener cuentas bancarias del cliente con id: {}", idcliente);
         List<CuentaBancaria> cuentas = cuentaBancariaService.obtenerCuentasPorCliente(idcliente);
