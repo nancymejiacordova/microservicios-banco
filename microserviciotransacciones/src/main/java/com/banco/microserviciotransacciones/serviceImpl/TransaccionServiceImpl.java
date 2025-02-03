@@ -9,6 +9,7 @@ import com.banco.microserviciotransacciones.model.CuentaBancaria;
 import com.banco.microserviciotransacciones.model.Transaccion;
 import com.banco.microserviciotransacciones.repository.CuentaBancariaRepository;
 import com.banco.microserviciotransacciones.repository.TransaccionRepository;
+import com.banco.microserviciotransacciones.service.CuentaBancariaClientService;
 import com.banco.microserviciotransacciones.service.CuentaBancariaService;
 import com.banco.microserviciotransacciones.service.TransaccionService;
 import java.math.BigDecimal;
@@ -37,6 +38,9 @@ public class TransaccionServiceImpl implements TransaccionService {
     private TransaccionRepository transaccionRepository;
     @Autowired
     private CuentaBancariaService cuentaBancariaService;
+    
+     @Autowired
+    private CuentaBancariaClientService cuentaBancariaClientService;
 
     @Autowired
     private CuentaBancariaRepository cuentaBancariaRepository;
@@ -47,7 +51,7 @@ public class TransaccionServiceImpl implements TransaccionService {
 
     @Transactional
     @Override
-    public Transaccion realizarTransaccion(Transaccion transaccion,CuentaBancaria cuenta) {
+    public Transaccion realizarTransaccion(Transaccion transaccion,CuentaBancaria cuenta,String token) {
 
         try {
             logger.info("Inicio de la transacción: {} para la cuenta: {}", transaccion.getTipotransaccion(), transaccion.getIdcuentadestino().getNumerocuenta());
@@ -70,8 +74,9 @@ public class TransaccionServiceImpl implements TransaccionService {
 
             transaccion.setFechatransaccion(new Date());
             transaccion.setIdcuentadestino(cuenta);
-
             transaccionRepository.save(transaccion);
+            System.out.println("guardo la table transaccion");
+            cuentaBancariaClientService.actualizarCuenta(cuenta.getIdcuentabancaria(),cuenta.getSaldoactual(),token);
 
             logger.info("Transacción exitosa para la cuenta: {}", transaccion.getIdcuentadestino().getNumerocuenta());
 

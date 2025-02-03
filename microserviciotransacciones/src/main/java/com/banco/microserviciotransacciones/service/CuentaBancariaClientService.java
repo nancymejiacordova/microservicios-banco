@@ -5,6 +5,8 @@
 package com.banco.microserviciotransacciones.service;
 
 import com.banco.microserviciotransacciones.model.CuentaBancaria;
+import java.math.BigDecimal;
+import reactor.core.publisher.Mono;
 
 /**
  *
@@ -13,5 +15,7 @@ import com.banco.microserviciotransacciones.model.CuentaBancaria;
 public interface CuentaBancariaClientService {
     
      CuentaBancaria obtenerCuenta(String numeroCuenta, String token);
+     boolean verificarSaldoSuficiente(String numeroCuenta, BigDecimal monto, String token);
+     void actualizarCuenta(Long cuentaId, BigDecimal monto, String token);
     
 }

@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
         
 public interface TransaccionService {
     
-   Transaccion realizarTransaccion(Transaccion transaccion, CuentaBancaria cuenta);
+   Transaccion realizarTransaccion(Transaccion transaccion, CuentaBancaria cuenta,String token);
    List<Transaccion> obtenerHistorialTransaccionesPorCuenta(String numeroCuenta);
    Transaccion realizarTransferencia(String numeroCuentaOrigen, String numeroCuentaDestino, BigDecimal monto);
 }

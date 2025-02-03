@@ -7,6 +7,7 @@ package com.banco.microserviciocuentas.service;
 import com.banco.microserviciocuentas.model.CuentaBancaria;
 import com.banco.microserviciocuentas.utilities.template.ClienteCreateTemp;
 import com.banco.microserviciocuentas.utilities.template.CuentaCreateTemp;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
@@ -22,6 +23,7 @@ public interface CuentaBancariaService {
      CuentaBancaria obtenerCuentaPorNumero(String numeroCuenta);
      List<CuentaBancaria> obtenerCuentasPorCliente(Long idcliente);
      Page<CuentaBancaria> listCuentas(Pageable pageable); 
+     void actualizarSaldo(long idcuenta, BigDecimal nuevoSaldo);
     
     
 }

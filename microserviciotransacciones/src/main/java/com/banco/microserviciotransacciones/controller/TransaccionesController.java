@@ -10,6 +10,7 @@ import com.banco.microserviciotransacciones.service.TransaccionService;
 import com.banco.microserviciotransacciones.serviceImpl.CuentaBancariaClientServiceImpl;
 import com.banco.microserviciotransacciones.serviceImpl.CuentaBancariaServiceImpl;
 import com.banco.microserviciotransacciones.template.TransferenciaTemp;
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -55,46 +56,46 @@ public class TransaccionesController {
     }
 
     @PostMapping("/transaccion")
-    ResponseEntity<Object> realizarDeposito(@RequestBody Transaccion transaccion, @RequestHeader("Authorization") String authorizationHeader) {
-        
+    ResponseEntity<Object> realizarTransaccion(@RequestBody Transaccion transaccion, @RequestHeader("Authorization") String authorizationHeader) {
+
         Map<String, String> response = new HashMap<>();
+        boolean estadosaldo = true;
         CuentaBancaria cuenta = cuentaBancariaClientServiceImpl.obtenerCuenta(transaccion.getIdcuentadestino().getNumerocuenta(), authorizationHeader.substring(7));
-        if(cuenta!=null){
-        try {
-            Transaccion nuevaTransaccion = transaccionService.realizarTransaccion(transaccion,cuenta);
-            logger.info("Operación de depósito exitosa. Transacción realizada para la cuenta: {} con monto: {}",
-                    transaccion.getIdcuentadestino().getNumerocuenta(), transaccion.getMonto());
-            return ResponseEntity.status(HttpStatus.CREATED).body(nuevaTransaccion);
-        } catch (IllegalArgumentException e) {
+        if (cuenta != null) {
+            try {
+                
+                if("Retiros".equals(transaccion.getTipotransaccion())){
+                estadosaldo=cuentaBancariaClientServiceImpl.verificarSaldoSuficiente(transaccion.getIdcuentadestino().getNumerocuenta(), transaccion.getMonto(), authorizationHeader.substring(7));
+                }else{
+                    estadosaldo = true;
+                }   
+                    
+                 if(estadosaldo){                
+                    Transaccion nuevaTransaccion = transaccionService.realizarTransaccion(transaccion, cuenta, authorizationHeader.substring(7));
+                    logger.info("Operación de depósito exitosa. Transacción realizada para la cuenta: {} con monto: {}",
+                            transaccion.getIdcuentadestino().getNumerocuenta(), transaccion.getMonto());
+                    return ResponseEntity.status(HttpStatus.CREATED).body(nuevaTransaccion);
+                } else {
+                    response.put("error", "Saldo insuficiente para realizar el retiro");
+                    response.put("mensaje", "Error al realizar el depósito. Saldo insuficiente para la cuenta: {}. Error: {}");
+                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+                }
+            } catch (Exception e) {
+                // Registro de log para cualquier error inesperado
+                logger.error("Error inesperado al realizar el depósito para la cuenta: {}. Error: {}",
+                        transaccion.getIdcuentadestino().getNumerocuenta(), e.getMessage(), e);
 
-            logger.error("Error al realizar el depósito. Saldo insuficiente para la cuenta: {}. Error: {}",
-                    transaccion.getIdcuentadestino().getNumerocuenta(), e.getMessage());
+                // Respuesta con código HTTP 500 (Internal Server Error) por error inesperado
+                response.put("error", "Error inesperado al procesar la transacción");
+                response.put("mensaje", e.getMessage());
 
-            //  Map de error para respuesta más genérica
-           
-            response.put("error", "Saldo insuficiente para realizar el retiro");
-            response.put("mensaje", e.getMessage());
-
-            // Respuesta con código HTTP 400 (Bad Request) por saldo insuficiente
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-        } catch (Exception e) {
-            // Registro de log para cualquier error inesperado
-            logger.error("Error inesperado al realizar el depósito para la cuenta: {}. Error: {}",
-                    transaccion.getIdcuentadestino().getNumerocuenta(), e.getMessage(), e);
-
-            // Respuesta con código HTTP 500 (Internal Server Error) por error inesperado
-            
-            response.put("error", "Error inesperado al procesar la transacción");
-            response.put("mensaje", e.getMessage());
-
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+            }
+        } else {
+            response.put("error", "Cuenta no encontrada");
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
-        }
-        else{
-             response.put("error", "Cuenta no encontrada");
-             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
-        }
-        
+
     }
 
     // Endpoint para consultar el historial de transacciones
@@ -145,4 +146,6 @@ public class TransaccionesController {
             return ResponseEntity.status(e.getStatus()).body(null);
         }
     }
+    
+    
 }

@@ -34,14 +34,13 @@ import org.slf4j.LoggerFactory;
 @Service
 @RequiredArgsConstructor
 public class CuentaBancariaServiceImpl implements CuentaBancariaService {
-    
+
     private final CuentaBancariaRepository cuentaBancariaRepository;
     private final ClienteRepository clienteRepository;
     private final ConversionService conversionService;
     private final ClienteService clienteService;
-   private static final Logger logger = LoggerFactory.getLogger(CuentaBancariaServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(CuentaBancariaServiceImpl.class);
 
-    
     @Override
     @Transactional()
     public CuentaBancaria crearCuentaBancaria(CuentaCreateTemp cuentaCreateTemp) {
@@ -51,26 +50,26 @@ public class CuentaBancariaServiceImpl implements CuentaBancariaService {
         }
 
         var cliente = clienteService.findByidCliente(cuentaCreateTemp.getCliente().getIdCliente());
-        
+
         var cuentaEntity = CuentaBancaria.builder()
-            .idcliente(cliente)
-            .numerocuenta(cuentaCreateTemp.getNumerocuenta())
-            .tipocuenta(cuentaCreateTemp.getTipocuenta())
-            .saldoactual(cuentaCreateTemp.getSaldoInicial())
-            .fechaCreacion(new Date())
-            .build();
+                .idcliente(cliente)
+                .numerocuenta(cuentaCreateTemp.getNumerocuenta())
+                .tipocuenta(cuentaCreateTemp.getTipocuenta())
+                .saldoactual(cuentaCreateTemp.getSaldoInicial())
+                .fechaCreacion(new Date())
+                .build();
         return this.cuentaBancariaRepository.save(cuentaEntity);
-       // return this.conversionService.convert(cuentaEntity, CuentaSecTemp.class);
+        // return this.conversionService.convert(cuentaEntity, CuentaSecTemp.class);
     }
 
     @Override
     public Page<CuentaBancaria> listCuentas(Pageable pageable) {
         return this.cuentaBancariaRepository.findAll(pageable);
     }
-    
+
     @Override
     public CuentaBancaria obtenerCuentaPorNumero(String numeroCuenta) {
-          logger.info("Consultando la cuenta bancaria con número: {}", numeroCuenta);
+        logger.info("Consultando la cuenta bancaria con número: {}", numeroCuenta);
         CuentaBancaria cuentaBancaria = cuentaBancariaRepository.findByNumerocuenta(numeroCuenta)
                 .orElseThrow(() -> {
                     logger.warn("No se encontró una cuenta con el número de cuenta: {}", numeroCuenta);
@@ -79,9 +78,9 @@ public class CuentaBancariaServiceImpl implements CuentaBancariaService {
         logger.info("Cuenta encontrada: {}", cuentaBancaria.getIdcuentabancaria());
         return cuentaBancaria;
     }
-    
+
     @Override
-     public List<CuentaBancaria> obtenerCuentasPorCliente(Long idcliente) {
+    public List<CuentaBancaria> obtenerCuentasPorCliente(Long idcliente) {
         logger.info("Iniciando la obtención de cuentas bancarias para el cliente con id: {}", idcliente);
 
         try {
@@ -97,5 +96,19 @@ public class CuentaBancariaServiceImpl implements CuentaBancariaService {
             throw new RuntimeException("Error al obtener las cuentas bancarias.");
         }
     }
-    }
 
+    @Override
+  public void actualizarSaldo(long idcuenta, BigDecimal nuevoSaldo) {
+      
+        Optional<CuentaBancaria> cuenta = cuentaBancariaRepository.findById(idcuenta);
+        
+        if(cuenta.get()==null){  
+                logger.error("Error crítico al intentar obtener las cuentas bancarias para el cliente con id: {}. Error: {}", idcuenta);
+            throw new RuntimeException("Error al obtener las cuentas bancarias.");
+        }
+        
+        cuenta.get().setSaldoactual(nuevoSaldo);
+        cuenta.get().setFechaultimaactualizacion(new Date());  
+        cuentaBancariaRepository.save(cuenta.get());
+    }
+}

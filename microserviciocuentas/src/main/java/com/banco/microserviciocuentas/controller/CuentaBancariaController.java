@@ -9,6 +9,7 @@ import com.banco.microserviciocuentas.exceptions.Exceptions;
 import com.banco.microserviciocuentas.model.CuentaBancaria;
 import com.banco.microserviciocuentas.service.CuentaBancariaService;
 import com.banco.microserviciocuentas.utilities.template.CuentaCreateTemp;
+import java.math.BigDecimal;
 import java.util.List;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +25,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -118,6 +120,12 @@ public class CuentaBancariaController {
         }
 
         return cuentas;
+    }
+    
+     @PutMapping("/actualizar/{cuentaId}")
+    public void actualizarCuenta(@PathVariable long cuentaId, @RequestBody CuentaBancaria cuentaBancaria) {
+        // Lógica para actualizar el saldo de la cuenta
+        cuentaBancariaService.actualizarSaldo(cuentaId, cuentaBancaria.getSaldoactual());
     }
 
 }
