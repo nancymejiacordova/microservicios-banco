@@ -19,5 +19,5 @@ public interface TransaccionService {
     
    Transaccion realizarTransaccion(Transaccion transaccion, CuentaBancaria cuenta,String token);
    List<Transaccion> obtenerHistorialTransaccionesPorCuenta(String numeroCuenta);
-   Transaccion realizarTransferencia(String numeroCuentaOrigen, String numeroCuentaDestino, BigDecimal monto);
+   Transaccion realizarTransferencia(CuentaBancaria numeroCuentaOrigen, CuentaBancaria numeroCuentaDestino, BigDecimal monto,String token);
 }

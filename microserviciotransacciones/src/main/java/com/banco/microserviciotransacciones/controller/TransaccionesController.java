@@ -47,7 +47,7 @@ public class TransaccionesController {
         this.cuentaBancariaClientServiceImpl = cuentaBancariaClientServiceImpl;
     }
 
-    @GetMapping("/prueba/historial/{numeroCuenta}")
+    @GetMapping("/historial/{numeroCuenta}")
     public CuentaBancaria obtenerHistorialTransacciones(@PathVariable String numeroCuenta, @RequestHeader("Authorization") String authorizationHeader) {
         // Llamar al servicio para obtener la cuenta
         System.out.println("controlador de obtencion de cuenta micro 1 ");
@@ -125,22 +125,31 @@ public class TransaccionesController {
     }
 
     @PostMapping("/transferir")
-    public ResponseEntity<Transaccion> realizarTransferencia(@RequestBody TransferenciaTemp transferenciaTemp) {
+    public ResponseEntity<Transaccion> realizarTransferencia(@RequestBody TransferenciaTemp transferenciaTemp,@RequestHeader("Authorization") String authorizationHeader) {
         logger.info("Solicitud de transferencia recibida: origen={} destino={} monto={}",
                 transferenciaTemp.getNumeroCuentaOrigen(),
                 transferenciaTemp.getNumeroCuentaDestino(),
                 transferenciaTemp.getMonto());
 
         try {
+            
+            CuentaBancaria cuentaOrigen = cuentaBancariaClientServiceImpl.obtenerCuenta(transferenciaTemp.getNumeroCuentaOrigen(), authorizationHeader.substring(7));
+            CuentaBancaria cuentaDestino = cuentaBancariaClientServiceImpl.obtenerCuenta(transferenciaTemp.getNumeroCuentaDestino(), authorizationHeader.substring(7));
+            
+            if(cuentaOrigen!=null && cuentaDestino!=null){
             Transaccion transaccion = transaccionService.realizarTransferencia(
-                    transferenciaTemp.getNumeroCuentaOrigen(),
-                    transferenciaTemp.getNumeroCuentaDestino(),
-                    transferenciaTemp.getMonto());
+                    cuentaOrigen,
+                    cuentaDestino,
+                    transferenciaTemp.getMonto(),authorizationHeader.substring(7));
 
             logger.info("Transferencia exitosa de la cuenta {} a la cuenta {}",
                     transferenciaTemp.getNumeroCuentaOrigen(),
                     transferenciaTemp.getNumeroCuentaDestino());
             return ResponseEntity.status(HttpStatus.CREATED).body(transaccion);
+            }else{
+                logger.info("Se encontraron {} transacciones para la cuenta {}", cuentaOrigen, cuentaOrigen);
+           return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+            }
         } catch (ResponseStatusException e) {
             logger.error("Error en la transferencia: {}", e.getMessage());
             return ResponseEntity.status(e.getStatus()).body(null);

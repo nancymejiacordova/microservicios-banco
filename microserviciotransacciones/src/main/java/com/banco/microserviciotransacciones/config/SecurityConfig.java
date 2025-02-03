@@ -20,24 +20,13 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 public class SecurityConfig {
 
-//    @Override
-//    protected void configure(HttpSecurity http) throws Exception {
-//        // Permite todas las solicitudes sin autenticación
-//        http
-//            .authorizeRequests()
-//                .antMatchers("/**").permitAll() // Permite todas las rutas
-//            .anyRequest().permitAll() // También permite cualquier otra solicitud
-//            .and()
-//            .csrf().disable(); // Desactiva CSRF (solo si es necesario, y con precaución)
-//    }
         @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtRequestFilter jwtRequestFilter) throws Exception {
         http
             .csrf().disable()
             .authorizeRequests()
-            .antMatchers("/transacciones/deposito").hasAnyRole("USER", "ADMIN")
-            .antMatchers("/transacciones/retiro").hasAnyRole("USER", "ADMIN")
-            .antMatchers("/transacciones/transferencia").hasAnyRole("USER", "ADMIN")
+            .antMatchers("/transacciones/transaccion").hasAnyRole("USER", "ADMIN")
+            .antMatchers("/transacciones/transferir").hasAnyRole("USER", "ADMIN")
             .antMatchers("/transacciones/**").hasRole("ADMIN")
             .anyRequest().authenticated()
             .and()

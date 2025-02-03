@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.server.ResponseStatusException;
 
 /**
@@ -122,22 +123,10 @@ public class TransaccionServiceImpl implements TransaccionService {
 
     @Transactional
     @Override
-    public Transaccion realizarTransferencia(String numeroCuentaOrigen, String numeroCuentaDestino, BigDecimal monto) {
-        logger.info("Iniciando transferencia de la cuenta {} a la cuenta {}", numeroCuentaOrigen, numeroCuentaDestino);
-
-        // Obtener las cuentas bancarias
-        CuentaBancaria cuentaOrigen = cuentaBancariaRepository.findByNumerocuenta(numeroCuentaOrigen);
-
-        if (cuentaOrigen == null) {
-            logger.error("La cuenta de origen no existe: {}", numeroCuentaOrigen);
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Cuenta de origen no encontrada");
-        }
-
-        CuentaBancaria cuentaDestino = cuentaBancariaRepository.findByNumerocuenta(numeroCuentaDestino);
-        if (cuentaDestino == null) {
-            logger.error("La cuenta de destino no existe: {}", numeroCuentaDestino);
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Cuenta de destino no encontrada");
-        }
+    public Transaccion realizarTransferencia( CuentaBancaria cuentaOrigen, CuentaBancaria cuentaDestino, BigDecimal monto,String token) {
+        logger.info("Iniciando transferencia de la cuenta {} a la cuenta {}", cuentaOrigen.getNumerocuenta(), cuentaDestino.getSaldoactual());
+       System.out.println("antes de debito:"+cuentaOrigen.getSaldoactual());
+        
 
         // Validar que la cuenta de origen tiene suficiente saldo
         if (cuentaOrigen.getSaldoactual().compareTo(monto) < 0) {
@@ -146,7 +135,10 @@ public class TransaccionServiceImpl implements TransaccionService {
         }
 
         // Realizar la transferencia: restar del saldo de la cuenta de origen y sumar en la cuenta destino
+        System.out.println("antes de debito:"+cuentaOrigen.getSaldoactual());
         cuentaOrigen.setSaldoactual(cuentaOrigen.getSaldoactual().subtract(monto));
+        System.out.println("despues de debito:"+cuentaOrigen.getSaldoactual());
+        
         cuentaDestino.setSaldoactual(cuentaDestino.getSaldoactual().add(monto));
 
         // Crear la transacción
@@ -159,10 +151,13 @@ public class TransaccionServiceImpl implements TransaccionService {
 
         // Guardar la transacción y las cuentas actualizadas
         transaccionRepository.save(transaccion);
-        cuentaBancariaRepository.save(cuentaOrigen);
-        cuentaBancariaRepository.save(cuentaDestino);
+        
+        cuentaBancariaClientService.actualizarCuenta(cuentaOrigen.getIdcuentabancaria(),cuentaOrigen.getSaldoactual(),token);
+        cuentaBancariaClientService.actualizarCuenta(cuentaDestino.getIdcuentabancaria(),cuentaDestino.getSaldoactual(),token);
+//        cuentaBancariaRepository.save(cuentaOrigen);
+//        cuentaBancariaRepository.save(cuentaDestino);
 
-        logger.info("Transferencia realizada con éxito de la cuenta {} a la cuenta {}", numeroCuentaOrigen, numeroCuentaDestino);
+        logger.info("Transferencia realizada con éxito de la cuenta {} a la cuenta {}", cuentaOrigen.getNumerocuenta(), cuentaDestino.getNumerocuenta());
         return transaccion;
     }
 
