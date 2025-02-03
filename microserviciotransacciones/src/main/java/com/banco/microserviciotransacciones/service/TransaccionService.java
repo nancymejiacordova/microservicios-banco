@@ -4,7 +4,10 @@
  */
 package com.banco.microserviciotransacciones.service;
 
+import com.banco.microserviciotransacciones.model.CuentaBancaria;
 import com.banco.microserviciotransacciones.model.Transaccion;
+import java.math.BigDecimal;
+import java.util.List;
 import org.springframework.stereotype.Service;
 
 /**
@@ -14,6 +17,7 @@ import org.springframework.stereotype.Service;
         
 public interface TransaccionService {
     
-   Transaccion realizarDeposito(Transaccion transaccion);
-    
+   Transaccion realizarTransaccion(Transaccion transaccion, CuentaBancaria cuenta);
+   List<Transaccion> obtenerHistorialTransaccionesPorCuenta(String numeroCuenta);
+   Transaccion realizarTransferencia(String numeroCuentaOrigen, String numeroCuentaDestino, BigDecimal monto);
 }

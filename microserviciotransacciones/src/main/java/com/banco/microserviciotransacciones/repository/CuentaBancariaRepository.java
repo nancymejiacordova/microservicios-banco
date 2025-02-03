@@ -17,7 +17,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface CuentaBancariaRepository extends JpaRepository<CuentaBancaria, Long>{
     
-     Optional<CuentaBancaria> findByNumerocuenta(String numerocuenta);
-     List<CuentaBancaria> findByIdcliente_Idcliente(Long idcliente);
+    // Optional<CuentaBancaria> findByNumerocuenta(String numerocuenta);
+   CuentaBancaria findByNumerocuenta(String numerocuenta);
+     
     
 }

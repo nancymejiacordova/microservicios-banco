@@ -18,6 +18,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -48,6 +49,12 @@ public class CuentaBancariaController {
             throw new Exceptions(ErrorEnum.NO_CONTENT, HttpStatus.NO_CONTENT.value());
         }
         return listCuentas;
+    }
+    
+     @GetMapping("/{numeroCuenta}")
+    public ResponseEntity<CuentaBancaria> obtenerCuenta(@PathVariable String numeroCuenta) {
+        CuentaBancaria cuenta = cuentaBancariaService.obtenerCuentaPorNumero(numeroCuenta);
+        return ResponseEntity.ok(cuenta);
     }
 
     

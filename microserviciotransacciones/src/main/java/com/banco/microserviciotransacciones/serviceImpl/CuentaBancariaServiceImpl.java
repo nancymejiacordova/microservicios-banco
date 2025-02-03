@@ -14,14 +14,15 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 
 /**
  *
@@ -67,11 +68,11 @@ public class CuentaBancariaServiceImpl implements CuentaBancariaService {
     @Override
     public CuentaBancaria obtenerCuentaPorNumero(String numeroCuenta) {
           logger.info("Consultando la cuenta bancaria con número: {}", numeroCuenta);
-        CuentaBancaria cuentaBancaria = cuentaBancariaRepository.findByNumerocuenta(numeroCuenta)
-                .orElseThrow(() -> {
-                    logger.warn("No se encontró una cuenta con el número de cuenta: {}", numeroCuenta);
-                    return new RuntimeException("Cuenta no encontrada"+numeroCuenta);
-                });
+        CuentaBancaria cuentaBancaria = cuentaBancariaRepository.findByNumerocuenta(numeroCuenta);
+//                .orElseThrow(() -> {
+//                    logger.warn("No se encontró una cuenta con el número de cuenta: {}", numeroCuenta);
+//                    return new RuntimeException("Cuenta no encontrada"+numeroCuenta);
+//                });
         logger.info("Cuenta encontrada: {}", cuentaBancaria.getIdcuentabancaria());
         return cuentaBancaria;
     }

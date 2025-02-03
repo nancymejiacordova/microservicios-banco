@@ -36,30 +36,30 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name="transaccion")
-public class Transaccion implements Serializable  {
-    
+@Table(name = "transaccion")
+public class Transaccion implements Serializable {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long idtransaccion;
-    
-    @Column(nullable=false)
+
+    @Column(nullable = false)
     private BigDecimal monto;
-    
+
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private TipoTransaccion tipotransaccion;
-    
-    @Column(nullable=false)
+
+    @Column(nullable = false)
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date fechatransaccion;
-    
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name="idcuentaorigen")
+
+    @ManyToOne(fetch = FetchType.EAGER, optional = true)
+    @JoinColumn(name = "idcuentaorigen")
     private CuentaBancaria idcuentaorigen;
-    
+
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name="idcuentadestino")
+    @JoinColumn(name = "idcuentadestino")
     private CuentaBancaria idcuentadestino;
-    
+
 }

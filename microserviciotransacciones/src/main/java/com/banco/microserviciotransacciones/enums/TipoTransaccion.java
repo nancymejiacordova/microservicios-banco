@@ -11,7 +11,9 @@ package com.banco.microserviciotransacciones.enums;
 public enum TipoTransaccion {
     
     Depositos("Depositos"),
-    Retiros("Retiros");
+    Retiros("Retiros"),
+    Transferencia("Transferencia");
+ 
 
     private final String tipo;
 
