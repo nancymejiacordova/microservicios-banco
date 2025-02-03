@@ -45,4 +45,14 @@ public class CuentaCreateTemp {
     @Pattern(regexp = "^(Corriente|Ahorros)$", message = "El tipo de cuenta debe ser 'Corriente' o 'Ahorro'")
     private ClienteTemp cliente;
 
+    public CuentaCreateTemp(String string, String string0, BigDecimal bigDecimal) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+       public CuentaCreateTemp(String numerocuenta, TipoCuentaEnum tipocuenta, BigDecimal saldo) {
+        this.numerocuenta = numerocuenta;
+        this.tipocuenta = tipocuenta;
+        this.saldoInicial = saldo;
+    }
+
 }

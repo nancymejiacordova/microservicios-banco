@@ -1,0 +1,20 @@
+services:
+  microserviciocuentas:
+    build:
+      context: ./microserviciocuentas
+    ports:
+      - 8081:8081
+    networks:
+      - microservicios
+  microserviciotransacciones:
+    build:
+      context: ./microserviciotransacciones
+    ports:
+      - 8082:8082
+    networks:
+      - microservicios
+    depends_on:
+      - microserviciocuentas
+networks:
+  microservicios:
+    driver: bridge

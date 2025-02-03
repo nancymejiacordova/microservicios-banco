@@ -39,80 +39,74 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(path = "/cuentaBancaria", produces = MediaType.APPLICATION_JSON_VALUE)
 @RequiredArgsConstructor
 public class CuentaBancariaController {
-   
+
     private final CuentaBancariaService cuentaBancariaService;
     private static final Logger logger = LoggerFactory.getLogger(CuentaBancariaController.class);
 
-
     @GetMapping("/consulta")
-    public Page<CuentaBancaria> listar(Pageable pageable){
+    public Page<CuentaBancaria> listar(Pageable pageable) {
         var listCuentas = this.cuentaBancariaService.listCuentas(pageable);
         if (!listCuentas.hasContent()) {
             throw new Exceptions(ErrorEnum.NO_CONTENT, HttpStatus.NO_CONTENT.value());
         }
         return listCuentas;
     }
-    
-     @GetMapping("/{numeroCuenta}")
+
+    @GetMapping("/{numeroCuenta}")
     public ResponseEntity<CuentaBancaria> obtenerCuenta(@PathVariable String numeroCuenta) {
         CuentaBancaria cuenta = cuentaBancariaService.obtenerCuentaPorNumero(numeroCuenta);
         return ResponseEntity.ok(cuenta);
     }
 
-    
- @GetMapping("/consulta/{numeroCuenta}")
+    @GetMapping("/consulta/{numeroCuenta}")
     public CuentaBancaria obtenerCuentaPorNumero(@PathVariable String numeroCuenta) {
-         logger.info("Recibiendo solicitud para consultar la cuenta con número: {}", numeroCuenta);
-        
+        logger.info("Recibiendo solicitud para consultar la cuenta con número: {}", numeroCuenta);
+
         try {
             CuentaBancaria cuenta = cuentaBancariaService.obtenerCuentaPorNumero(numeroCuenta);
             logger.info("Cuenta con número {} encontrada exitosamente", numeroCuenta);
             return cuenta;
         } catch (Exception e) {
             logger.error("Error al consultar la cuenta con número {}: {}", numeroCuenta, e.getMessage());
-            throw e;  
+            throw e;
         }
     }
-
-    
 
     /**
      *
      * @param cuentaCreateTemp
+     * @param result
      * @return
      */
-
     @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
     public CuentaBancaria crear(@RequestBody CuentaCreateTemp cuentaCreateTemp, BindingResult result) {
-      logger.info("Recibiendo solicitud para crear una cuenta bancaria con datos: {}", cuentaCreateTemp);
-
-        if (result.hasErrors()) {
-            logger.warn("Errores de validación al intentar crear la cuenta: ");
-            List<FieldError> errores = result.getFieldErrors();
-            for (FieldError error : errores) {
-                logger.warn("Campo: {} - Error: {}", error.getField(), error.getDefaultMessage());
-            }
-            throw new Exceptions(ErrorEnum.DATOS_ENTRADA_INVALIDOS, HttpStatus.BAD_REQUEST.value());
-        }
-
+        logger.info("Recibiendo solicitud para crear una cuenta bancaria con datos: {}", cuentaCreateTemp);
         try {
+            if (result.hasErrors()) {
+                logger.warn("Errores de validación al intentar crear la cuenta: ");
+                List<FieldError> errores = result.getFieldErrors();
+                for (FieldError error : errores) {
+                    logger.warn("Campo: {} - Error: {}", error.getField(), error.getDefaultMessage());
+                }
+                throw new Exceptions(ErrorEnum.DATOS_ENTRADA_INVALIDOS, HttpStatus.BAD_REQUEST.value());
+            }
+
             CuentaBancaria cuenta = this.cuentaBancariaService.crearCuentaBancaria(cuentaCreateTemp);
             logger.info("Cuenta bancaria creada exitosamente con número: {}", cuenta.getNumerocuenta());
             return cuenta;
         } catch (Exception e) {
             logger.error("Error al crear la cuenta bancaria: {}", e.getMessage());
-            throw e;
+            throw new Exceptions(ErrorEnum.DATOS_ENTRADA_INVALIDOS, HttpStatus.BAD_REQUEST.value());
         }
     }
 
-    
-  // Endpoint para obtener cuentas por idcliente
+    // Endpoint para obtener cuentas por idcliente
     @GetMapping("consulta/cuentascliente/{idcliente}")
     public List<CuentaBancaria> getCuentasPorCliente(@PathVariable Long idcliente) {
         logger.info("Solicitud recibida para obtener cuentas bancarias del cliente con id: {}", idcliente);
         List<CuentaBancaria> cuentas = cuentaBancariaService.obtenerCuentasPorCliente(idcliente);
-        
+
         if (cuentas.isEmpty()) {
             logger.warn("No se encontraron cuentas bancarias para el cliente con id: {}", idcliente);
         } else {
@@ -121,8 +115,8 @@ public class CuentaBancariaController {
 
         return cuentas;
     }
-    
-     @PutMapping("/actualizar/{cuentaId}")
+
+    @PutMapping("/actualizar/{cuentaId}")
     public void actualizarCuenta(@PathVariable long cuentaId, @RequestBody CuentaBancaria cuentaBancaria) {
         // Lógica para actualizar el saldo de la cuenta
         cuentaBancariaService.actualizarSaldo(cuentaId, cuentaBancaria.getSaldoactual());

@@ -47,7 +47,7 @@ public class TransaccionesController {
         this.cuentaBancariaClientServiceImpl = cuentaBancariaClientServiceImpl;
     }
 
-    @GetMapping("/historial/{numeroCuenta}")
+    @GetMapping("/historial/prueba/{numeroCuenta}")
     public CuentaBancaria obtenerHistorialTransacciones(@PathVariable String numeroCuenta, @RequestHeader("Authorization") String authorizationHeader) {
         // Llamar al servicio para obtener la cuenta
         System.out.println("controlador de obtencion de cuenta micro 1 ");

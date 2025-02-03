@@ -64,6 +64,11 @@ public class CuentaBancaria implements Serializable {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="idcliente")
     private Cliente idcliente;
-    
+
+      public CuentaBancaria(String numerocuenta, TipoCuentaEnum tipocuenta, BigDecimal saldo) {
+        this.numerocuenta = numerocuenta;
+        this.tipocuenta = tipocuenta;
+        this.saldoactual = saldo;
+    }
    
 }

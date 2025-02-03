@@ -23,13 +23,13 @@ public class SecurityConfig {
 
 //    @Override
 //    protected void configure(HttpSecurity http) throws Exception {
-//        // Permite todas las solicitudes sin autenticaciÃ³n
+//        // Permite todas las solicitudes sin autenticación
 //        http
 //            .authorizeRequests()
 //                .antMatchers("/**").permitAll() // Permite todas las rutas
-//            .anyRequest().permitAll() // TambiÃ©n permite cualquier otra solicitud
+//            .anyRequest().permitAll() // También permite cualquier otra solicitud
 //            .and()
-//            .csrf().disable(); // Desactiva CSRF (solo si es necesario, y con precauciÃ³n)
+//            .csrf().disable(); // Desactiva CSRF (solo si es necesario, y con precaución)
 //    }
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtRequestFilter jwtRequestFilter) throws Exception {
@@ -37,6 +37,7 @@ public class SecurityConfig {
             .csrf().disable()
             .authorizeRequests()
             .antMatchers("/auth/login").permitAll()  
+            .antMatchers("/swagger-ui.html", "/v3/api-docs/**", "/swagger-ui/**").permitAll()     
             .antMatchers("/cuentaBancaria/consulta/**").hasAnyRole("USER", "ADMIN")
             .antMatchers("/cuentaBancaria/**").hasRole("ADMIN")
             .anyRequest().authenticated()
